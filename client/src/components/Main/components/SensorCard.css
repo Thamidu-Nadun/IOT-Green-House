@@ -1,0 +1,20 @@
+.sensor-card {
+  position: absolute;
+  padding: 0 auto;
+  .status {
+    /* background: #000; */
+    padding: 0.5em 1em;
+    display: flex;
+    justify-content: space-between;
+  }
+  .detail {
+    position: absolute;
+    bottom: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5em 1em;
+    .detail-txt{
+        margin-right: 1em;
+    }
+  }
+}

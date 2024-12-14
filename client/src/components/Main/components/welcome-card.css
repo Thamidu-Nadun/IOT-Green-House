@@ -1,0 +1,29 @@
+.welcome-card{
+    background-size: cover;
+    width: 30vw;
+    height: 20vh;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    position: relative;
+    padding: 0.8em;
+    border-radius: 25px;
+    .card-title{
+        .title-welcome{
+            font-size: 1em;
+            .welcome-user{
+                font-size: 1.3em;
+                font-family: monospace;
+            }
+        }
+        .title-msg{
+            font-size: .8em;
+        }
+    }
+    .card-status{
+        margin: 0.5em;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        font-family: monospace;
+    }
+}
