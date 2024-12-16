@@ -21,7 +21,7 @@ def get_random_temperature():
     })
     
 @app.route('/humidity', methods=['GET'])
-def get_random_soil_moisture():
+def get_random_humidity():
     humidity = random.randint(30, 80)
     current_time = datetime.now().strftime('%H:%M:%S.%f')[:-3]
     return jsonify({
