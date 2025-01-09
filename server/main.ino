@@ -18,7 +18,7 @@ float getCurrentHumidity() {
 // Handle the /humidity endpoint
 void handleHumidity() {
     float humidity = getCurrentHumidity();
-    String jsonResponse = "{\"humidity\": " + String(humidity) + ", \"type\": \"percentage\"}";
+    String jsonResponse = "{\"humidity\": " + String(humidity) + ", \"unit\": \"percentage\"}";
     server.send(200, "application/json", jsonResponse);
 }
 
