@@ -5,16 +5,24 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Sidebar from './components/SideBar/SideBar.jsx';
 import Topbar from './components/Topbar/Topbar.jsx';
 import Dashboard from './components/Dashboard/Dashboard.jsx';
+import Switch from './components/Switch/Switch.jsx';
 
 function App () {
   return (
     <div id="page-top">
       <div id="wrapper">
-        <Sidebar/>
+        <Sidebar />
         <div id="content-wrapper" className="d-flex flex-column">
           <div id="content">
-            <Topbar/>
-            <Dashboard/>
+            <Topbar />
+            <Dashboard />
+            <div className="ml-4">
+              <Switch
+                name="Fan"
+                description="This is a sample description for device."
+                endpoint="http://localhost:3000/switch/fan/"
+              />
+            </div>
           </div>
         </div>
       </div>
