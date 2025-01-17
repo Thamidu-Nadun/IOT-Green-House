@@ -21,21 +21,30 @@ float currentTemperature = 0.0;
 bool fanStatus = false;
 bool pumpStatus = false;
 
+// Pin for soil moisture sensor
+int soilMoisturePin = A0; // Pin for soil moisture sensor
+int soilMoistureValue = 0;  // Variable to store soil moisture value
+int soilMoisturePercentage = 0;  // Soil moisture as percentage
+
 // Function to update sensor data
 void updateSensorData() {
     currentHumidity = dht.readHumidity();
     currentTemperature = dht.readTemperature();
+    
+    // Read soil moisture sensor
+    soilMoistureValue = analogRead(soilMoisturePin);  // Read soil moisture value
+    soilMoisturePercentage = map(soilMoistureValue, 0, 4095, 0, 100); // Map to percentage
 }
 
 // Handle humidity endpoint
 void handleHumidity() {
-    String jsonResponse = "{\\"humidity\\": " + String(currentHumidity) + ", \\"unit\\": \\"percentage\\"}";
+    String jsonResponse = "{\"humidity\": " + String(currentHumidity) + ", \"unit\": \"percentage\"}";
     server.send(200, "application/json", jsonResponse);
 }
 
 // Handle temperature endpoint
 void handleTemperature() {
-    String jsonResponse = "{\\"temperature\\": " + String(currentTemperature) + ", \\"unit\\": \\"Celsius\\"}";
+    String jsonResponse = "{\"temperature\": " + String(currentTemperature) + ", \"unit\": \"Celsius\"}";
     server.send(200, "application/json", jsonResponse);
 }
 
@@ -52,7 +61,7 @@ void handleFanControl() {
         return;
     }
 
-    String jsonResponse = "{\\"message\\": \\"Fan turned " + String(fanStatus ? "ON" : "OFF") + "\\", \\"status\\": " + String(fanStatus) + "}";
+    String jsonResponse = "{\"message\": \"Fan turned " + String(fanStatus ? "ON" : "OFF") + "\", \"status\": " + String(fanStatus) + "}";
     server.send(200, "application/json", jsonResponse);
 }
 
@@ -69,8 +78,40 @@ void handlePumpControl() {
         return;
     }
 
-    String jsonResponse = "{\\"message\\": \\"Pump turned " + String(pumpStatus ? "ON" : "OFF") + "\\", \\"status\\": " + String(pumpStatus) + "}";
+    String jsonResponse = "{\"message\": \"Pump turned " + String(pumpStatus ? "ON" : "OFF") + "\", \"status\": " + String(pumpStatus) + "}";
     server.send(200, "application/json", jsonResponse);
+}
+
+// Handle soil moisture endpoint
+void handleSoilEndpoint() {
+    String response = "{";
+    response += "\"soil_moisture\": \"" + String(soilMoisturePercentage) + "%%\",";
+    response += "\"unit\": \"percentage\"";
+    response += "}";
+
+    server.send(200, "application/json", response);
+}
+
+// Function to control the water pump based on soil moisture
+void controlWaterPump() {
+    if (soilMoisturePercentage < 40) {  // If soil moisture is below 40%
+        digitalWrite(RELAY_PIN, HIGH);  // Turn water pump ON
+        pumpStatus = true;
+    } else if (soilMoisturePercentage > 60) {  // If soil moisture is above 60%
+        digitalWrite(RELAY_PIN, LOW);  // Turn water pump OFF
+        pumpStatus = false;
+    }
+}
+
+// Function to control the fan based on temperature and humidity
+void controlFan() {
+    if (currentTemperature > 30 && currentHumidity < 60) {  // If temperature > 30°C and humidity is low
+        digitalWrite(FAN_PIN, HIGH);  // Turn fan ON
+        fanStatus = true;
+    } else if (currentTemperature < 25 || currentHumidity > 70) {  // If temperature < 25°C or humidity > 70%
+        digitalWrite(FAN_PIN, LOW);  // Turn fan OFF
+        fanStatus = false;
+    }
 }
 
 void setup() {
@@ -99,6 +140,7 @@ void setup() {
     server.on("/temperature", handleTemperature);
     server.on("/switch/fan", handleFanControl);
     server.on("/controller/pump", handlePumpControl);
+    server.on("/soil", handleSoilEndpoint); // Add soil moisture endpoint
 
     // Start server
     server.begin();
@@ -108,6 +150,12 @@ void setup() {
 void loop() {
     // Update sensor data
     updateSensorData();
+
+    // Control water pump based on soil moisture
+    controlWaterPump();
+
+    // Control fan based on temperature and humidity
+    controlFan();
 
     // Handle client requests
     server.handleClient();
