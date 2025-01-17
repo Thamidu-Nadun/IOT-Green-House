@@ -3,7 +3,7 @@
 #include <DHT.h>
 
 #define DHTPIN 4 // Pin for DHT sensor
-#define DHTTYPE DHT11 // DHT sensor type
+#define DHTTYPE DHT22 // DHT sensor type (changed from DHT11 to DHT22)
 DHT dht(DHTPIN, DHTTYPE);
 
 const char* ssid = "esp32"; // Wi-Fi SSID
@@ -126,7 +126,7 @@ void setup() {
     digitalWrite(RELAY_PIN, LOW);
     digitalWrite(FAN_PIN, LOW);
 
-    // Initialize DHT sensor
+    // Initialize DHT sensor (DHT22)
     dht.begin();
 
     // Set up Wi-Fi
