@@ -10,7 +10,7 @@ function SideBar() {
   return (
     <div id="wrapper" className={isToggled ? "sidebar-toggled" : ""}>
       <ul
-        className={`navbar-nav bg-gradient-primary sidebar sidebar-dark accordion ${
+        className={`navbar-nav bg-gradient-success sidebar sidebar-dark accordion ${
           isToggled ? "toggled" : ""
         }`}
         id="accordionSidebar"
@@ -62,13 +62,13 @@ function SideBar() {
           >
             <div className="bg-white py-2 collapse-inner rounded">
               <h6 className="collapse-header">Conditions:</h6>
-              <a className="collapse-item" href="">
+              <a className="collapse-item" href="#temperature">
                 Temperature
               </a>
-              <a className="collapse-item" href="">
+              <a className="collapse-item" href="#humidity">
                 Humidity
               </a>
-              <a className="collapse-item" href="">
+              <a className="collapse-item" href="#SoilMoisture">
                 Soil Moisture
               </a>
             </div>
@@ -128,10 +128,10 @@ function SideBar() {
             <span className="fw-bolder fs-5" style={{ fontFamily: "Monospace" }}>
               SmartGrow
             </span>{" "}
-            is packed with premium features, components, and more!
+            is here to help solve your challenges with smart IoT solutions, making it easier to monitor and optimize your greenhouse environment.!
           </p>
           <a className="btn btn-success btn-sm" href="">
-            Upgrade to Pro!
+            Get Help!
           </a>
         </div>
       </ul>

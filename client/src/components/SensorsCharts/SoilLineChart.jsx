@@ -15,29 +15,30 @@ import {
 // Register Chart.js components
 ChartJS.register(LineElement, PointElement, CategoryScale, LinearScale, Title, Tooltip, Legend);
 
-const LineChart = (props) => {
-  // State to store the temperature data and time labels
+const SoilLineChart = (props) => {
   const [dataPoints, setDataPoints] = useState(Array(20).fill(0)); // Initialize with 20 zero values
   const [timeStamps, setTimeStamps] = useState(Array(20).fill('-')); // Initialize with 20 placeholder times
-  const LineChartData = {
-    labels: props.name || 'Chart Title',
+
+  const SoilChartData = {
+    labels: props.name || 'Soil Moisture',
     borderColor: props.borderColor || 'rgba(75, 192, 192, 1)',
     backgroundColor: props.backgroundColor || 'rgba(75, 192, 192, 0.2)',
-    endpoint: props.endpoint || 'http://localhost:8080/temperature',
-  }
+    endpoint: props.endpoint || 'http://172.18.239.221:8080/soil',
+  };
+
   useEffect(() => {
     const interval = setInterval(() => {
-      // Fetch actual data from the updated API endpoint
-      axios.get(LineChartData.endpoint)
+      // Fetch soil moisture data from the API endpoint
+      axios.get(SoilChartData.endpoint)
         .then(response => {
-          const { temperature } = response.data;
+          const { value } = response.data;
 
           // Get the current time in HH:MM:SS format
           const currentTime = new Date().toLocaleTimeString();
 
           // Update data points: add new data and remove the oldest if length exceeds 20
           setDataPoints((prevData) => {
-            const newData = [...prevData, temperature];
+            const newData = [...prevData, value];
             if (newData.length > 20) newData.shift(); // Keep the last 20 data points
             return newData;
           });
@@ -50,7 +51,7 @@ const LineChart = (props) => {
           });
         })
         .catch(error => {
-          console.error('Error fetching data:', error);
+          console.error('Error fetching soil data:', error);
         });
     }, 1000); // Fetch data every second
 
@@ -62,10 +63,10 @@ const LineChart = (props) => {
     labels: timeStamps,
     datasets: [
       {
-        label: LineChartData.labels,
+        label: SoilChartData.labels,
         data: dataPoints,
-        borderColor: LineChartData.borderColor,
-        backgroundColor: LineChartData.backgroundColor,
+        borderColor: SoilChartData.borderColor,
+        backgroundColor: SoilChartData.backgroundColor,
         borderWidth: 2,
         tension: 0.4, // Smooth the line curve for a smoother effect
         pointRadius: 3, // Size of the data points
@@ -101,10 +102,10 @@ const LineChart = (props) => {
       y: {
         title: {
           display: true,
-          text: 'Temperature (°C)',
+          text: 'Soil Moisture (%)',
         },
         ticks: {
-          callback: (value) => `${value} °C`, // Display °C for clarity
+          callback: (value) => `${value} %`, // Display % for clarity
           min: 0, // Minimum Y value
           max: 100, // Maximum Y value
         },
@@ -119,4 +120,4 @@ const LineChart = (props) => {
   );
 };
 
-export default LineChart;
+export default SoilLineChart;

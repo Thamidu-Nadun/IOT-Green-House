@@ -3,6 +3,8 @@ import CardSm from './CardSm';
 import TaskCard from './TaskCard';
 import CardMd from './CardMd';
 import TemperatureSection from './sections/TemperatureSection';
+import HumiditySection from './sections/HumiditySection';
+import SoilSection from './sections/SoilSection';
 
 const Dashboard = () => {
   return (
@@ -38,6 +40,8 @@ const Dashboard = () => {
       </div>
 
       <TemperatureSection/>
+      <HumiditySection/>
+      <SoilSection/>
 
     </div>
   );

@@ -16,11 +16,20 @@ function App () {
           <div id="content">
             <Topbar />
             <Dashboard />
-            <div className="ml-4">
+            <div className="d-flex ml-4">
               <Switch
                 name="Fan"
                 description="This is a sample description for device."
-                endpoint="http://localhost:3000/switch/fan/"
+                endpoint="http://172.18.239.221:3000/switch/fan/"
+                borderColor="#FF9D23"
+                image="fanAI.jpg"
+              />
+              <Switch
+                name="Water Pump"
+                description="This is a sample description for device."
+                endpoint="http://172.18.239.221:3000/switch/fan/"
+                borderColor="#6A80B9"
+                image="waterPumpAI.jpg"
               />
             </div>
           </div>
