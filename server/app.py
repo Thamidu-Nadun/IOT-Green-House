@@ -10,14 +10,13 @@ CORS(app)  # Enable CORS for all routes
 def index():
     return "Hello World!"
 
-@app.route('/temp', methods=['GET'])
+@app.route('/temperature', methods=['GET'])
 def get_random_temperature():
     temperature = random.uniform(25, 50)
     current_time = datetime.now().strftime('%H:%M:%S.%f')[:-3]
     return jsonify({
         'temperature': round(temperature, 2),
-        'unit': 'Celsius',
-        'time': current_time
+        'unit': 'Celsius'
     })
     
 @app.route('/humidity', methods=['GET'])
@@ -26,8 +25,7 @@ def get_random_humidity():
     current_time = datetime.now().strftime('%H:%M:%S.%f')[:-3]
     return jsonify({
         "value": humidity,
-        "unit": "percentage",
-        "time": current_time
+        "unit": "percentage"
     })
 
 @app.route('/soil', methods=['GET'])
@@ -35,9 +33,8 @@ def get_random_soil_moisture():
     soil_moisture = random.randint(30, 80)
     current_time = datetime.now().strftime('%H:%M:%S.%f')[:-3]
     return jsonify({
-        "value": soil_moisture,
-        "unit": "percentage",
-        "time": current_time
+        "soil_moisture": soil_moisture,
+        "unit": "percentage"
     })
 
 if __name__ == '__main__':
