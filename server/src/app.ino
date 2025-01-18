@@ -12,8 +12,8 @@ const char* password = "12345678"; // Wi-Fi password
 WebServer server(80); // Web server on port 80
 
 // Pin assignments
-#define RELAY_PIN 5      // Pin controlling the relay for the water pump
-#define FAN_PIN 16       // Pin controlling the fan (via MOSFET or relay)
+#define WATERPUMP_PIN 5      // Pin controlling the water pump
+#define FAN_PIN 16           // Pin controlling the fan (via MOSFET or motor driver)
 
 // Pin for soil moisture sensor
 #define SOIL_MOISTURE_PIN 34 // Pin for soil moisture sensor (ADC pin)
@@ -86,10 +86,10 @@ void handleFanControl() {
 void handlePumpControl() {
     if (server.arg("action") == "on") {
         pumpStatus = true;
-        digitalWrite(RELAY_PIN, HIGH); // Turn pump ON
+        digitalWrite(WATERPUMP_PIN, HIGH); // Turn pump ON
     } else if (server.arg("action") == "off") {
         pumpStatus = false;
-        digitalWrite(RELAY_PIN, LOW); // Turn pump OFF
+        digitalWrite(WATERPUMP_PIN, LOW); // Turn pump OFF
     } else {
         server.send(400, "application/json", "{\"error\": \"Invalid action\"}");
         return;
@@ -109,13 +109,25 @@ void handleSoilEndpoint() {
     server.send(200, "application/json", response);
 }
 
+// Handle fan status endpoint
+void handleFanStatus() {
+    String jsonResponse = "{\"status\": " + String(fanStatus) + "}";
+    server.send(200, "application/json", jsonResponse);
+}
+
+// Handle pump status endpoint
+void handlePumpStatus() {
+    String jsonResponse = "{\"status\": " + String(pumpStatus) + "}";
+    server.send(200, "application/json", jsonResponse);
+}
+
 // Function to control the water pump based on soil moisture
 void controlWaterPump() {
     if (soilMoisturePercentage < 40) {  // If soil moisture is below 40%
-        digitalWrite(RELAY_PIN, HIGH);  // Turn water pump ON
+        digitalWrite(WATERPUMP_PIN, HIGH);  // Turn water pump ON
         pumpStatus = true;
     } else if (soilMoisturePercentage > 60) {  // If soil moisture is above 60%
-        digitalWrite(RELAY_PIN, LOW);  // Turn water pump OFF
+        digitalWrite(WATERPUMP_PIN, LOW);  // Turn water pump OFF
         pumpStatus = false;
     }
 }
@@ -136,19 +148,19 @@ void setup() {
     Serial.begin(115200);
 
     // Initialize pins
-    pinMode(RELAY_PIN, OUTPUT);
+    pinMode(WATERPUMP_PIN, OUTPUT);
     pinMode(FAN_PIN, OUTPUT);
-    digitalWrite(RELAY_PIN, LOW);
+    digitalWrite(WATERPUMP_PIN, LOW);
     digitalWrite(FAN_PIN, LOW);
 
     // Initialize DHT sensor
     dht.begin();
 
-    // Set up Wi-Fi
+    // Set up Wi-Fi as Access Point
     WiFi.softAP(ssid, password);
     Serial.println("Access Point Started");
     Serial.print("IP Address: ");
-    Serial.println(WiFi.softAPIP());
+    Serial.println(WiFi.softAPIP()); // This will print the IP address of the ESP32
 
     // Define routes
     server.on("/humidity", handleHumidity);
@@ -156,6 +168,10 @@ void setup() {
     server.on("/switch/fan", handleFanControl);
     server.on("/controller/pump", handlePumpControl);
     server.on("/soil", handleSoilEndpoint);
+
+    // Define status routes
+    server.on("/switch/fan/status", HTTP_GET, handleFanStatus);
+    server.on("/controller/pump/status", HTTP_GET, handlePumpStatus);
 
     // Start server
     server.begin();
