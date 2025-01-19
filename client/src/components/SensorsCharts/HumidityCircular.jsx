@@ -8,7 +8,7 @@ function HumidityCircular(props) {
   const [unit, setUnit] = useState('%'); // State to hold the unit
 
   const HumidityCircularData = {
-    endpoint: props.endpoint || 'http://172.18.239.221:8080/humidity', // Humidity endpoint
+    endpoint: props.endpoint || 'http://192.168.4.1/humidity', // Humidity endpoint
   };
 
   useEffect(() => {
@@ -16,14 +16,14 @@ function HumidityCircular(props) {
     const fetchHumidity = async () => {
       try {
         const response = await axios.get(HumidityCircularData.endpoint);
-        let { value, unit } = response.data; // Extract humidity value and unit from API response
+        let { humidity, unit } = response.data; // Correctly extract humidity and unit
 
         // If the unit is "percentage", replace it with "%"
         if (unit === 'percentage') {
           unit = '%';
         }
 
-        setPercentage(value);
+        setPercentage(humidity); // Update the percentage state
         setUnit(unit); // Update the unit state
       } catch (error) {
         console.error('Error fetching humidity:', error);

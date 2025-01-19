@@ -17,21 +17,22 @@ function App () {
             <Topbar />
             <Dashboard />
             <div className="d-flex ml-4">
-              <Switch
-                name="Fan"
-                description="This is a sample description for device."
-                endpoint="http://172.18.239.221:3000/switch/fan/"
-                borderColor="#FF9D23"
-                image="fanAI.jpg"
-              />
-              <Switch
-                name="Water Pump"
-                description="This is a sample description for device."
-                endpoint="http://172.18.239.221:3000/switch/fan/"
-                borderColor="#6A80B9"
-                image="waterPumpAI.jpg"
-              />
-            </div>
+  <Switch
+    name="Fan"
+    description="This is a sample description for device."
+    endpoint="http://192.168.4.1/switch/fan/"  // Updated endpoint for Fan
+    borderColor="#FF9D23"
+    image="fanAI.jpg"
+  />
+  <Switch
+    name="Water Pump"
+    description="This is a sample description for device."
+    endpoint="http://192.168.4.1/contoller/pump"  // Corrected endpoint for Water Pump
+    borderColor="#6A80B9"
+    image="waterPumpAI.jpg"
+  />
+</div>
+
           </div>
         </div>
       </div>

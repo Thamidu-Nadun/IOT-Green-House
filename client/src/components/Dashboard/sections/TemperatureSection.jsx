@@ -36,7 +36,7 @@ function TemperatureSection () {
           </div>
           {/* Card Body */}
           <div className="card-body">
-            <LineChart name="Live Temperature" endpoint="http://172.18.239.221:8080/temperature" borderColor="#EB5A3C"/>
+            <LineChart name="Live Temperature" endpoint="http://192.168.4.1/temperature" borderColor="#EB5A3C"/>
           </div>
         </div>
       </div>
@@ -51,7 +51,7 @@ function TemperatureSection () {
           {/* Card Body */}
           <div className="card-body d-flex justify-content-center">
             <div className="col-6">
-              <CircularChart endpoint="http://172.18.239.221:8080/temperature" unit="°C"/>
+              <CircularChart endpoint="http://192.168.4.1/temperature" unit="°C"/>
             </div>
           </div>
         </div>

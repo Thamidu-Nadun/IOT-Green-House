@@ -24,15 +24,15 @@ const HumidityLine = (props) => {
     labels: props.name || 'Humidity Chart',
     borderColor: props.borderColor || 'rgba(54, 162, 235, 1)',
     backgroundColor: props.backgroundColor || 'rgba(54, 162, 235, 0.2)',
-    endpoint: props.endpoint || 'http://172.18.239.221:8080/humidity',
+    endpoint: props.endpoint || 'http://192.168.4.1/humidity',
   };
 
   useEffect(() => {
     const interval = setInterval(() => {
-      // Fetch actual data from the updated API endpoint
+      // Fetch actual data from the API endpoint
       axios.get(HumidityLineData.endpoint)
         .then(response => {
-          const { value: humidity } = response.data; // Extract humidity value from API response
+          const { humidity } = response.data; // Correctly extract humidity value
 
           // Get the current time in HH:MM:SS format
           const currentTime = new Date().toLocaleTimeString();

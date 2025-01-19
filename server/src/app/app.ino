@@ -13,7 +13,7 @@ WebServer server(80); // Web server on port 80
 
 // Pin assignments
 #define WATERPUMP_PIN 5      // Pin controlling the water pump
-#define FAN_PIN 16           // Pin controlling the fan (via MOSFET or motor driver)
+#define FAN_PIN 35           // Pin controlling the fan (via MOSFET or motor driver)
 
 // Pin for soil moisture sensor
 #define SOIL_MOISTURE_PIN 34 // Pin for soil moisture sensor (ADC pin)
@@ -53,20 +53,30 @@ void updateSensorData() {
     Serial.println(" %");
 }
 
+// Function to send CORS headers
+void sendCorsHeaders() {
+    server.sendHeader("Access-Control-Allow-Origin", "*");
+    server.sendHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    server.sendHeader("Access-Control-Allow-Headers", "Content-Type");
+}
+
 // Handle humidity endpoint
 void handleHumidity() {
+    sendCorsHeaders();
     String jsonResponse = "{\"humidity\": " + String(currentHumidity) + ", \"unit\": \"percentage\"}";
     server.send(200, "application/json", jsonResponse);
 }
 
 // Handle temperature endpoint
 void handleTemperature() {
+    sendCorsHeaders();
     String jsonResponse = "{\"temperature\": " + String(currentTemperature) + ", \"unit\": \"Celsius\"}";
     server.send(200, "application/json", jsonResponse);
 }
 
 // Handle fan control
 void handleFanControl() {
+    sendCorsHeaders();
     if (server.arg("action") == "on") {
         fanStatus = true;
         digitalWrite(FAN_PIN, HIGH); // Turn fan ON
@@ -82,8 +92,9 @@ void handleFanControl() {
     server.send(200, "application/json", jsonResponse);
 }
 
-// Handle water pump control
+// Handle pump control
 void handlePumpControl() {
+    sendCorsHeaders();
     if (server.arg("action") == "on") {
         pumpStatus = true;
         digitalWrite(WATERPUMP_PIN, HIGH); // Turn pump ON
@@ -101,8 +112,9 @@ void handlePumpControl() {
 
 // Handle soil moisture endpoint
 void handleSoilEndpoint() {
+    sendCorsHeaders();
     String response = "{";
-    response += "\"soil_moisture\": \"" + String(soilMoisturePercentage) + "%%\",";
+    response += "\"soil_moisture\": " + String(soilMoisturePercentage) + ",";
     response += "\"unit\": \"percentage\"";
     response += "}";
 
@@ -111,12 +123,14 @@ void handleSoilEndpoint() {
 
 // Handle fan status endpoint
 void handleFanStatus() {
+    sendCorsHeaders();
     String jsonResponse = "{\"status\": " + String(fanStatus) + "}";
     server.send(200, "application/json", jsonResponse);
 }
 
 // Handle pump status endpoint
 void handlePumpStatus() {
+    sendCorsHeaders();
     String jsonResponse = "{\"status\": " + String(pumpStatus) + "}";
     server.send(200, "application/json", jsonResponse);
 }
@@ -134,10 +148,10 @@ void controlWaterPump() {
 
 // Function to control the fan based on temperature and humidity
 void controlFan() {
-    if (currentTemperature > 30 && currentHumidity < 60) {  // If temperature > 30°C and humidity is low
+    if (currentTemperature > 30 || currentHumidity < 60) {  // If temperature > 30°C and humidity is low
         digitalWrite(FAN_PIN, HIGH);  // Turn fan ON
         fanStatus = true;
-    } else if (currentTemperature < 25 || currentHumidity > 70) {  // If temperature < 25°C or humidity > 70%
+    } else if (currentTemperature < 30 || currentHumidity > 70) {  // If temperature < 25°C or humidity > 70%
         digitalWrite(FAN_PIN, LOW);  // Turn fan OFF
         fanStatus = false;
     }
@@ -165,13 +179,13 @@ void setup() {
     // Define routes
     server.on("/humidity", handleHumidity);
     server.on("/temperature", handleTemperature);
-    server.on("/switch/fan", handleFanControl);
-    server.on("/controller/pump", handlePumpControl);
+    server.on("/switch/fan", handleFanControl); // Control fan
+    server.on("/controller/pump", handlePumpControl); // Control pump
     server.on("/soil", handleSoilEndpoint);
 
     // Define status routes
-    server.on("/switch/fan/status", HTTP_GET, handleFanStatus);
-    server.on("/controller/pump/status", HTTP_GET, handlePumpStatus);
+    server.on("/switch/fan/status", HTTP_GET, handleFanStatus); // Get fan status
+    server.on("/controller/pump/status", HTTP_GET, handlePumpStatus); // Get pump status
 
     // Start server
     server.begin();

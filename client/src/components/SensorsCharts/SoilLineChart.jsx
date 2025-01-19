@@ -23,7 +23,7 @@ const SoilLineChart = (props) => {
     labels: props.name || 'Soil Moisture',
     borderColor: props.borderColor || 'rgba(75, 192, 192, 1)',
     backgroundColor: props.backgroundColor || 'rgba(75, 192, 192, 0.2)',
-    endpoint: props.endpoint || 'http://172.18.239.221:8080/soil',
+    endpoint: props.endpoint || 'http://192.168.4.1/soil',
   };
 
   useEffect(() => {
@@ -31,14 +31,14 @@ const SoilLineChart = (props) => {
       // Fetch soil moisture data from the API endpoint
       axios.get(SoilChartData.endpoint)
         .then(response => {
-          const { value } = response.data;
+          const { soil_moisture } = response.data;  // Extract the soil_moisture value
 
           // Get the current time in HH:MM:SS format
           const currentTime = new Date().toLocaleTimeString();
 
           // Update data points: add new data and remove the oldest if length exceeds 20
           setDataPoints((prevData) => {
-            const newData = [...prevData, value];
+            const newData = [...prevData, soil_moisture];
             if (newData.length > 20) newData.shift(); // Keep the last 20 data points
             return newData;
           });

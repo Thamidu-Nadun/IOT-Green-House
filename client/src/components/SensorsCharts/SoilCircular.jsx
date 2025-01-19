@@ -8,7 +8,7 @@ function SoilCircular(props) {
   const [unit, setUnit] = useState('%'); // State to hold the unit
 
   const SoilCircularData = {
-    endpoint: props.endpoint || 'http://172.18.239.221:8080/soil', // Soil moisture endpoint
+    endpoint: props.endpoint || 'http://192.168.4.1/soil', // Soil moisture endpoint
   };
 
   useEffect(() => {
@@ -16,14 +16,14 @@ function SoilCircular(props) {
     const fetchSoil = async () => {
       try {
         const response = await axios.get(SoilCircularData.endpoint);
-        const { value, unit } = response.data; // Extract soil moisture value and unit from API response
+        const { soil_moisture, unit } = response.data; // Extract soil moisture and unit from API response
 
-        // If the unit is "percentage", replace it with "%"
+        // Set unit to "%" if it's "percentage"
         if (unit === 'percentage') {
           setUnit('%');
         }
 
-        setPercentage(value); // Set the soil moisture value
+        setPercentage(soil_moisture); // Set the soil moisture value
       } catch (error) {
         console.error('Error fetching soil data:', error);
       }
